@@ -43,7 +43,6 @@ janus.connect().then(() => {
 
         document.getElementById('hangup').addEventListener('click', () => {
           videocall.hangup()
-          hangup()
         })
 
         videocall.on('hangup', () => {
