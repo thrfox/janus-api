@@ -25,9 +25,9 @@ pack('./test/videocall/videocall.js', './test/videocall/videocall.bundle.js')
 
 httpServer.createServer({
   showDir: true,
-  root: './test/',
-  https: {
-    key: '/workspace/cert/dev.key',
-    cert: '/workspace/cert/dev.crt'
-  }
+  root: './test/'
+  // https: {
+  //   key: '/workspace/cert/dev.key',
+  //   cert: '/workspace/cert/dev.crt'
+  // }
 }).listen(8080)

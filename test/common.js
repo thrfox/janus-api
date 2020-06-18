@@ -1,7 +1,8 @@
 
 module.exports = {
   janus: {
-    url: 'wss://localhost:8989',
+    url: 'ws://janus.runjian.com:8188',
+    // url: 'wss://localhost:8989',
     keepAliveIntervalMs: 30000,
     options: {
       rejectUnauthorized: false
