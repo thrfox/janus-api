@@ -1,4 +1,3 @@
-
 class DeivceSelectUtil {
   static listDeivce () {
     return navigator.mediaDevices.enumerateDevices().then(devices => {
