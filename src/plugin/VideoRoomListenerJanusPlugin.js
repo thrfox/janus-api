@@ -6,9 +6,9 @@ class VideoRoomListenerJanusPlugin extends JanusPlugin {
     if (!roomId) {
       throw new Error('unknown roomId')
     }
-    if (!roomMemberPrivateId) {
-      throw new Error('unknown janusRoomPrivateMemberId')
-    }
+    // if (!roomMemberPrivateId) {
+    //   throw new Error('unknown janusRoomPrivateMemberId')
+    // }
 
     super(logger)
     this.roomId = roomId
@@ -24,7 +24,7 @@ class VideoRoomListenerJanusPlugin extends JanusPlugin {
     const join = {
       request: 'join',
       room: this.janusRoomId,
-      ptype: 'listener',
+      ptype: 'subscriber',
       feed: this.janusRemoteFeedId,
       private_id: this.janusRoomPrivateMemberId,
       offer_video: offerVideo,
@@ -32,28 +32,30 @@ class VideoRoomListenerJanusPlugin extends JanusPlugin {
     }
 
     return new Promise((resolve, reject) => {
-      this.transaction('message', { body: join }, 'event').then((param) => {
-        const { data, json } = param || {}
-        if (!data || data.videoroom !== 'attached') {
-          this.logger.error('VideoRoomListenerJanusPlugin join answer is not attached', data, json)
-          throw new Error('VideoRoomListenerJanusPlugin join answer is not attached')
-        }
-        if (!json.jsep) {
-          this.logger.error('VideoRoomListenerJanusPlugin join answer does not contains jsep', data, json)
-          throw new Error('VideoRoomListenerJanusPlugin join answer does not contains jsep')
-        }
+      this.transaction('message', { body: join }, 'event')
+        .then(param => {
+          const { data, json } = param || {}
+          if (!data || data.videoroom !== 'attached') {
+            this.logger.error('VideoRoomListenerJanusPlugin join answer is not attached', data, json)
+            throw new Error('VideoRoomListenerJanusPlugin join answer is not attached')
+          }
+          if (!json.jsep) {
+            this.logger.error('VideoRoomListenerJanusPlugin join answer does not contains jsep', data, json)
+            throw new Error('VideoRoomListenerJanusPlugin join answer does not contains jsep')
+          }
 
-        const jsep = json.jsep
-        if (this.filterDirectCandidates && jsep.sdp) {
-          jsep.sdp = this.sdpHelper.filterDirectCandidates(jsep.sdp)
-        }
+          const jsep = json.jsep
+          if (this.filterDirectCandidates && jsep.sdp) {
+            jsep.sdp = this.sdpHelper.filterDirectCandidates(jsep.sdp)
+          }
 
-        this.emit('jsep', jsep)
-        resolve(jsep)
-      }).catch((err) => {
-        this.logger.error('VideoRoomListenerJanusPlugin, unknown error connecting to room', err, join)
-        reject(err)
-      })
+          this.emit('jsep', jsep)
+          resolve(jsep)
+        })
+        .catch(err => {
+          this.logger.error('VideoRoomListenerJanusPlugin, unknown error connecting to room', err, join)
+          reject(err)
+        })
     })
   }
 
@@ -66,18 +68,20 @@ class VideoRoomListenerJanusPlugin extends JanusPlugin {
         jsep.sdp = this.sdpHelper.filterDirectCandidates(jsep.sdp)
       }
 
-      this.transaction('message', { body, jsep }, 'event').then((param) => {
-        const { data, json } = param || {}
+      this.transaction('message', { body, jsep }, 'event')
+        .then(param => {
+          const { data, json } = param || {}
 
-        if (!data || data.started !== 'ok') {
-          this.logger.error('VideoRoomListenerJanusPlugin set answer is not ok', data, json)
-          throw new Error('VideoRoomListenerJanusPlugin set answer is not ok')
-        }
-        resolve()
-      }).catch((err) => {
-        this.logger.error('VideoRoomListenerJanusPlugin, unknown error sending answer', err, answer)
-        reject(err)
-      })
+          if (!data || data.started !== 'ok') {
+            this.logger.error('VideoRoomListenerJanusPlugin set answer is not ok', data, json)
+            throw new Error('VideoRoomListenerJanusPlugin set answer is not ok')
+          }
+          resolve()
+        })
+        .catch(err => {
+          this.logger.error('VideoRoomListenerJanusPlugin, unknown error sending answer', err, answer)
+          reject(err)
+        })
     })
   }
 
@@ -89,9 +93,31 @@ class VideoRoomListenerJanusPlugin extends JanusPlugin {
     return this.transaction('trickle', { candidate })
   }
 
+  listRooms () {
+    const listRoom = {
+      request: 'list'
+    }
+    return this.transaction('message', { body: listRoom }, 'success').then(param => {
+      const { data } = param || {}
+      return data.list || []
+    })
+  }
+
+  listParticipants () {
+    const listparticipants = {
+      request: 'listparticipants',
+      room: this.janusRoomId
+    }
+
+    return this.transaction('message', { body: listparticipants }, 'success').then(param => {
+      const { data } = param || {}
+      return data.participants || []
+    })
+  }
+
   hangup () {
     super.hangup()
-    this.janus.destroyPlugin(this).catch((err) => {
+    this.janus.destroyPlugin(this).catch(err => {
       this.logger.error('VideoRoomListenerJanusPlugin, destroyPlugin error in hangup', err)
     })
   }

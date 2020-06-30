@@ -30,8 +30,8 @@ janus.connect().then(() => {
       const parameters = {
         type: 'rtp',
         audio: true,
-        audioport: 8113,
-        audiomcast: '127.0.0.1',
+        audioport: 8113, // 指的是服务器的8113端口
+        audiomcast: '127.0.0.1', // 指的是服务器的127.0.0.1
         audiopt: 111,
         audiortpmap: 'opus/48000/2',
 
@@ -39,7 +39,8 @@ janus.connect().then(() => {
         videoport: 8111,
         videomcast: '127.0.0.1',
         videopt: 96,
-        videortpmap: 'VP8/90000'
+        videortpmap: 'H264/90000'
+        // videortpmap: 'VP8/90000'
       }
 
       streaming.create(parameters).then(({ data, json }) => {

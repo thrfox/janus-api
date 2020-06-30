@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "eslint .",
+    "lint-fix": "eslint . --fix",
     "build-test": "node ./test/buildtest.js"
   },
   "engines": {

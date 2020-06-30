@@ -1,6 +1,7 @@
 
 module.exports = {
   janus: {
+    // url: 'wss://janus.conf.meetecho.com/ws', // 官方demo
     url: 'ws://janus.runjian.com:8188',
     // url: 'wss://localhost:8989',
     keepAliveIntervalMs: 30000,

@@ -38,6 +38,17 @@ function connect () {
 
     return janus.addPlugin(listener).then(() => {
       console.log('VideoRoomListenerJanusPlugin added')
+      document.getElementById('listRooms').addEventListener('click', () => {
+        listener.listRooms().then(rooms => {
+          console.log(rooms)
+        })
+      })
+
+      document.getElementById('listParticipants').addEventListener('click', () => {
+        listener.listParticipants().then(participants => {
+          console.log(participants)
+        })
+      })
 
       const peerConnection = new RTCPeerConnection(common.peerConnectionConfig)
 
