@@ -93,28 +93,6 @@ class VideoRoomListenerJanusPlugin extends JanusPlugin {
     return this.transaction('trickle', { candidate })
   }
 
-  listRooms () {
-    const listRoom = {
-      request: 'list'
-    }
-    return this.transaction('message', { body: listRoom }, 'success').then(param => {
-      const { data } = param || {}
-      return data.list || []
-    })
-  }
-
-  listParticipants () {
-    const listparticipants = {
-      request: 'listparticipants',
-      room: this.janusRoomId
-    }
-
-    return this.transaction('message', { body: listparticipants }, 'success').then(param => {
-      const { data } = param || {}
-      return data.participants || []
-    })
-  }
-
   hangup () {
     super.hangup()
     this.janus.destroyPlugin(this).catch(err => {

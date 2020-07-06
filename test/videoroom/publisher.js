@@ -5,7 +5,7 @@ const common = require('../common')
 const janusConfig = new JanusConfig(common.janus)
 
 const roomConfig = new JanusRoomConfig({
-  id: 1,
+  id: 101041,
   codec: 'vp8,vp9,h264',
   record: true,
   videoOrientExt: false,

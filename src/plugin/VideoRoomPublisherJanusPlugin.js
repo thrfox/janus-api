@@ -192,6 +192,7 @@ class VideoRoomPublisherJanusPlugin extends JanusPlugin {
   createRoom () {
     const body = {
       request: 'create',
+      room: this.config.id,
       description: '' + this.config.id,
       record: this.config.record,
       videocodec: this.config.codec,

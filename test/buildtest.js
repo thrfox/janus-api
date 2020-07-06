@@ -27,7 +27,7 @@ httpServer.createServer({
   showDir: true,
   root: './test/'
   // https: {
-  //   key: '/workspace/cert/dev.key',
-  //   cert: '/workspace/cert/dev.crt'
+  //   key: 'D:/cert/ssl_nopass.key',
+  //   cert: 'D:/cert/ssl_nopass.crt'
   // }
 }).listen(8086)

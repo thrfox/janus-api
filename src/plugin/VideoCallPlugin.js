@@ -104,6 +104,14 @@ class VideoCallPlugin extends JanusPlugin {
       }
     }
   }
+
+  candidate (candidate) {
+    if (this.filterDirectCandidates && candidate.candidate && this.sdpHelper.isDirectCandidate(candidate.candidate)) {
+      return
+    }
+
+    return this.transaction('trickle', { candidate })
+  }
 }
 
 module.exports = VideoCallPlugin

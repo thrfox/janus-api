@@ -41,6 +41,19 @@ janus.connect().then(() => {
       return videocall.register().then(() => {
         const peerConnection = new RTCPeerConnection(common.peerConnectionConfig)
 
+        peerConnection.onicecandidate = event => {
+          if (!event.candidate || !event.candidate.candidate) {
+            videocall.candidate({ completed: true })
+          } else {
+            const candidate = {
+              candidate: event.candidate.candidate,
+              sdpMid: event.candidate.sdpMid,
+              sdpMLineIndex: event.candidate.sdpMLineIndex
+            }
+            videocall.candidate(candidate)
+          }
+        }
+
         document.getElementById('hangup').addEventListener('click', () => {
           videocall.hangup()
         })

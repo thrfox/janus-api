@@ -1,9 +1,9 @@
-
 module.exports = {
   janus: {
     // url: 'wss://janus.conf.meetecho.com/ws', // 官方demo
-    url: 'ws://janus.runjian.com:8188',
-    // url: 'wss://localhost:8989',
+    // url: 'ws://janus.runjian.com:8188', // 本地janus 服务器
+    url: 'wss://192.168.10.100:8189', // 用wss转发janus 服务器 ws://janus.runjian.com:8188
+    // url: 'wss://192.168.10.100:9189', // 用wss转发janus 服务器 ws://janus.runjian.com:8188
     keepAliveIntervalMs: 30000,
     options: {
       rejectUnauthorized: false
@@ -16,9 +16,8 @@ module.exports = {
   },
   peerConnectionConfig: {
     iceServers: [
-      { url: 'stun:turnserver.techteamer.com:443' },
-      { username: 'demo', url: 'turn:turnserver.techteamer.com:443?transport=udp', credential: 'secret' },
-      { username: 'demo', url: 'turn:turnserver.techteamer.com:443?transport=tcp', credential: 'secret' }
+      // { url: 'stun:stun.l.google.com:19302' }
+      { url: 'stun:stun.ekiga.net:3478' }
     ]
   }
 }
