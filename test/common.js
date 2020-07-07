@@ -17,7 +17,7 @@ module.exports = {
   peerConnectionConfig: {
     iceServers: [
       // { url: 'stun:stun.l.google.com:19302' }
-      { url: 'stun:stun.ekiga.net:3478' }
+      { url: 'stun:janus.runjian.com:3478' }
     ]
   }
 }

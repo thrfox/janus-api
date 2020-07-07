@@ -59,7 +59,6 @@ janus.connect().then(() => {
         })
 
         videocall.on('hangup', () => {
-          console.log('hangupppppppppp')
           hangup()
         })
 

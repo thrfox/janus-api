@@ -66,14 +66,13 @@ class VideoCallPlugin extends JanusPlugin {
   }
 
   hangup () {
-    const body = { request: 'hangup' }
-    return this.transaction('message', { body }, 'event')
+    super.hangup()
   }
 
   cleanup () {
-    super.hangup()
     this.janus.destroyPlugin(this).catch(err => {
-      this.logger.error('VideoRoomListenerJanusPlugin, destroyPlugin error in hangup', err)
+      this.logger.error('VideoCallJanusPlugin, destroyPlugin error in hangup', err)
+      throw err
     })
   }
 
