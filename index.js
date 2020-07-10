@@ -8,7 +8,7 @@ const VideoRoomPublisherJanusPlugin = require('./src/plugin/VideoRoomPublisherJa
 const VideoRoomCommonJanusPlugin = require('./src/plugin/VideoRoomCommonJanusPlugin')
 const StreamingJanusPlugin = require('./src/plugin/StreamingJanusPlugin')
 const VideoCallPlugin = require('./src/plugin/VideoCallPlugin')
-const AudioBridgePlugin = require('./src/plugin/AudioBridgeJanusPlugin')
+const AudioBridgeJanusPlugin = require('./src/plugin/AudioBridgeJanusPlugin')
 const { JanusConfig, JanusAdminConfig, JanusRoomConfig } = require('./src/Config')
 
 module.exports = {
@@ -22,7 +22,7 @@ module.exports = {
   VideoRoomCommonJanusPlugin,
   StreamingJanusPlugin,
   VideoCallPlugin,
-  AudioBridgePlugin,
+  AudioBridgeJanusPlugin,
   JanusConfig,
   JanusAdminConfig,
   JanusRoomConfig
