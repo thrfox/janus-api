@@ -38,10 +38,16 @@ class AudioBridgeJanusPlugin extends JanusPlugin {
 
   join (config) {
     const { roomId, pin = '' } = config
-    const body = { request: 'join', room: roomId, pin, display: this.display }
-
     // TODO if joined, do change room
+    if (this.isJoined) {
+      const body = { request: 'changeroom', room: roomId, token: '' }
+      return this.transaction('message', { body }, 'event').then((param) => {
+        const { data } = param || {}
+        return data.participants
+      })
+    }
 
+    const body = { request: 'join', room: roomId, pin, display: this.display }
     return this.transaction('message', { body }, 'event').then((param) => {
       const { data } = param || {}
       if (!data || !data.id) {
@@ -161,7 +167,7 @@ class AudioBridgeJanusPlugin extends JanusPlugin {
       return
     }
 
-    if (audiobridge === 'joined') {
+    if (audiobridge === 'joined' || audiobridge === 'roomchanged') {
       this.emit('joined', data.participants)
       return
     }
