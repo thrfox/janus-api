@@ -17,6 +17,9 @@ const listRoomMemberHolder = document.getElementById('listRoomMemberHolder')
 let Rooms = []
 let RoomsParticipants = []
 
+var isJoined = false
+var hasConnect = false
+
 janus.connect().then(() => {
   const audiobridge = new AudioBridgeJanusPlugin('display', console, false)
   return janus.addPlugin(audiobridge).then(() => {
@@ -28,22 +31,37 @@ janus.connect().then(() => {
       })
     })
 
-    document.addEventListener('click', event => {
-      const roomId = parseInt(event.target.dataset.id)
-      if (event.target && event.target.classList.contains('joinActionLink')) {
-        joinRoom(roomId, audiobridge)
-        leaveButton.removeAttribute('disabled')
-        leaveButton.addEventListener('click', () => {
-          audiobridge.leave()
-        })
-      } else if (event.target && event.target.classList.contains('infoActionLink')) {
-        console.log('Info', event.target.dataset.id)
-        audiobridge.listParticipants(roomId).then(members => {
-          console.log({ members })
-          RoomsParticipants = members
-          createParticipantsTable(RoomsParticipants)
-        })
-      }
+    navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(stream => {
+      console.log('getUserMedia got stream')
+      document.addEventListener('click', event => {
+        const roomId = parseInt(event.target.dataset.id)
+        if (event.target && event.target.classList.contains('joinActionLink')) {
+          if (isJoined) {
+            changeRoom(roomId, audiobridge)
+          } else {
+            isJoined = true
+            if (hasConnect) {
+              audiobridge.join({ roomId })
+            } else {
+              joinRoom(roomId, audiobridge, stream)
+              hasConnect = true
+            }
+          }
+          leaveButton.removeAttribute('disabled')
+        } else if (event.target && event.target.classList.contains('infoActionLink')) {
+          console.log('Info', event.target.dataset.id)
+          audiobridge.listParticipants(roomId).then(members => {
+            console.log({ members })
+            RoomsParticipants = members
+            createParticipantsTable(RoomsParticipants)
+          })
+        }
+      })
+    })
+
+    leaveButton.addEventListener('click', () => {
+      isJoined = false
+      audiobridge.leave()
     })
 
     audiobridge.on('remoteMemberLeaving', leavingId => {
@@ -65,51 +83,51 @@ janus.connect().then(() => {
   })
 })
 
-function joinRoom(roomId, audiobridge) {
-  navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(stream => {
-    console.log('getUserMedia got stream')
-    audiobridge.join({ roomId }).then(members => {
-      console.log(members)
-      const peerConnection = new RTCPeerConnection(common.peerConnectionConfig)
-
-      peerConnection.onicecandidate = event => {
-        if (!event.candidate || !event.candidate.candidate) {
-          audiobridge.candidate({ completed: true })
-        } else {
-          const candidate = {
-            candidate: event.candidate.candidate,
-            sdpMid: event.candidate.sdpMid,
-            sdpMLineIndex: event.candidate.sdpMLineIndex
-          }
-          audiobridge.candidate(candidate)
+function joinRoom(roomId, audiobridge, stream) {
+  audiobridge.join({ roomId }).then(members => {
+    console.log(members)
+    const peerConnection = new RTCPeerConnection(common.peerConnectionConfig)
+    peerConnection.onicecandidate = event => {
+      if (!event.candidate || !event.candidate.candidate) {
+        audiobridge.candidate({ completed: true })
+      } else {
+        const candidate = {
+          candidate: event.candidate.candidate,
+          sdpMid: event.candidate.sdpMid,
+          sdpMLineIndex: event.candidate.sdpMLineIndex
         }
+        audiobridge.candidate(candidate)
       }
+    }
 
-      peerConnection.onaddstream = mediaStreamEvent => {
-        console.log('@onaddstream', mediaStreamEvent)
+    peerConnection.onaddstream = mediaStreamEvent => {
+      console.log('@onaddstream', mediaStreamEvent)
 
-        const audioElement = document.getElementById('audio')
-        audioElement.srcObject = mediaStreamEvent.stream
-      }
+      const audioElement = document.getElementById('audio')
+      audioElement.srcObject = mediaStreamEvent.stream
+    }
 
-      peerConnection.addStream(stream)
-      //  offerToReceiveAudio: true, offerToReceiveVideo: false
-      return peerConnection.createOffer({}).then(offer => {
-        console.log('got offer', offer)
+    peerConnection.addStream(stream)
+    //  offerToReceiveAudio: true, offerToReceiveVideo: false
+    return peerConnection.createOffer({}).then(offer => {
+      console.log('got offer', offer)
 
-        return peerConnection.setLocalDescription(offer).then(() => {
-          console.log('setLocalDescription')
-          const jsep = { type: offer.type, sdp: offer.sdp }
-          audiobridge.configure(jsep).then(jsep => {
-            console.log('ANSWER', jsep)
-            peerConnection.setRemoteDescription(new RTCSessionDescription(jsep)).then(() => {
-              console.log('remoteDescription set')
-            })
+      return peerConnection.setLocalDescription(offer).then(() => {
+        console.log('setLocalDescription')
+        const jsep = { type: offer.type, sdp: offer.sdp }
+        audiobridge.configure(jsep).then(jsep => {
+          console.log('ANSWER', jsep)
+          peerConnection.setRemoteDescription(new RTCSessionDescription(jsep)).then(() => {
+            console.log('remoteDescription set')
           })
         })
       })
     })
   })
+}
+
+function changeRoom(roomId, audiobridge) {
+  audiobridge.changeRoom({ roomId })
 }
 
 function createRoomsTable(rooms) {

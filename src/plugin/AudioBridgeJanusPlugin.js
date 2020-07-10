@@ -10,7 +10,6 @@ class AudioBridgeJanusPlugin extends JanusPlugin {
     this.filterDirectCandidates = !!filterDirectCandidates
 
     this.sdpHelper = new SdpHelper(this.logger)
-    this.isJoined = false
     this.janusRoomId = undefined
   }
 
@@ -38,23 +37,14 @@ class AudioBridgeJanusPlugin extends JanusPlugin {
 
   join (config) {
     const { roomId, pin = '' } = config
-    // TODO if joined, do change room
-    if (this.isJoined) {
-      const body = { request: 'changeroom', room: roomId, token: '' }
-      return this.transaction('message', { body }, 'event').then((param) => {
-        const { data } = param || {}
-        return data.participants
-      })
-    }
-
     const body = { request: 'join', room: roomId, pin, display: this.display }
+    // TODO if joined, do change room
     return this.transaction('message', { body }, 'event').then((param) => {
       const { data } = param || {}
       if (!data || !data.id) {
         this.logger.error('AudioBridgeJanusPlugin, could not join room', data)
         throw new Error('AudioBridgeJanusPlugin, could not join room')
       }
-      this.isJoined = true
       return data.participants
     }).catch((err) => {
       this.logger.error('AudioBridgeJanusPlugin, unknown error connecting to room', err)
@@ -62,10 +52,15 @@ class AudioBridgeJanusPlugin extends JanusPlugin {
     })
   }
 
+  changeRoom (config) {
+    const { roomId, muted = false } = config
+    const body = { request: 'changeroom', room: roomId, display: this.display, muted }
+    return this.transaction('message', { body }, 'event')
+  }
+
   leave () {
     const body = { request: 'leave' }
     return this.transaction('message', { body }, 'event').then(param => {
-      this.isJoined = false
       return param
     })
   }
