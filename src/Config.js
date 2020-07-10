@@ -49,6 +49,16 @@ class JanusRoomConfig {
   }
 }
 
+class JanusAudioBridgeConfig {
+  constructor (config) {
+    const {
+      record
+    } = config
+    if (record) this.record = record
+  }
+}
+
 module.exports.JanusConfig = JanusConfig
 module.exports.JanusAdminConfig = JanusAdminConfig
 module.exports.JanusRoomConfig = JanusRoomConfig
+module.exports.JanusAudioBridgeConfig = JanusAudioBridgeConfig

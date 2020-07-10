@@ -1,4 +1,4 @@
-module.exports = {
+const common = {
   janus: {
     // url: 'wss://janus.conf.meetecho.com/ws', // 官方demo
     // url: 'ws://janus.runjian.com:8188', // 本地janus 服务器
@@ -17,7 +17,10 @@ module.exports = {
   peerConnectionConfig: {
     iceServers: [
       // { url: 'stun:stun.l.google.com:19302' }
-      { url: 'stun:janus.runjian.com:3478' }
+      // { url: 'stun:janus.runjian.com:3478' }
+      { url: 'stun:192.168.10.100:3478' }
     ]
   }
 }
+
+module.exports = common
