@@ -109,29 +109,36 @@ janus.connect().then(() => {
           })
         })
 
-        var canvas = document.createElement('canvas')
-        canvas.style.height = '500px'
-        canvas.style.width = '500px'
-        var cxt = canvas.getContext('2d')
-        cxt.fillStyle = '#000000'
+        navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(stream => {
+          stream.getTracks().forEach(t => {
+            peerConnection.addTrack(t)
+          })
 
-        const stream = canvas.captureStream(0)
-        stream.getTracks().forEach(t => {
-          peerConnection.addTrack(t, stream)
+          // set local stream
+          const localvideo = document.getElementById('localvideo')
+          localvideo.srcObject = stream
+        }).catch(() => {
+          // if has not camera,create black screen
+          const canvas = generateEmptyCanvas()
+
+          const stream = canvas.captureStream(0)
+          stream.getTracks().forEach(t => {
+            peerConnection.addTrack(t, stream)
+          })
+          const localvideo = document.getElementById('localvideo')
+          localvideo.srcObject = stream
         })
-        const localvideo = document.getElementById('localvideo')
-        localvideo.srcObject = stream
-
-        // navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(stream => {
-        //   stream.getTracks().forEach(t => {
-        //     peerConnection.addTrack(t)
-        //   })
-
-        //   // set local stream
-        //   const localvideo = document.getElementById('localvideo')
-        //   localvideo.srcObject = stream
-        // })
       })
     })
   })
 })
+
+function generateEmptyCanvas () {
+  const canvas = document.createElement('canvas')
+  canvas.style.width = '400px'
+  canvas.style.height = '300px'
+  const ctx = canvas.getContext('2d')
+  ctx.fillStyle = '#000000'
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+  return canvas
+}
