@@ -8,7 +8,7 @@ const Janus = require('../../src/Janus')
 
 const janus = new Janus(janusConfig, console)
 
-function hangup () {
+function hangup() {
   document.getElementById('incomingDialog').style.display = 'none'
   const localvideo = document.getElementById('localvideo')
   localvideo.srcObject = null
@@ -19,7 +19,7 @@ function hangup () {
 /**
  * hangup and then register need remove dom listeners
  */
-function removeDOMEvent () {
+function removeDOMEvent() {
   const opertions = document.getElementsByTagName('button')
   Array.from(opertions).forEach(old => {
     if (old.id === 'register') {
@@ -100,24 +100,37 @@ janus.connect().then(() => {
           localvideo.play()
         }
 
-        navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(stream => {
-          stream.getTracks().forEach(t => {
-            peerConnection.addTrack(t)
-          })
-
-          // set local stream
-          const localvideo = document.getElementById('localvideo')
-          localvideo.srcObject = stream
-
-          document.getElementById('call').addEventListener('click', () => {
-            peerConnection.createOffer({}).then(offer => {
-              const callId = document.getElementById('callId').value
-              peerConnection.setLocalDescription(new RTCSessionDescription(offer)).then(() => {
-                videocall.doCall(offer, callId)
-              })
+        document.getElementById('call').addEventListener('click', () => {
+          peerConnection.createOffer({}).then(offer => {
+            const callId = document.getElementById('callId').value
+            peerConnection.setLocalDescription(new RTCSessionDescription(offer)).then(() => {
+              videocall.doCall(offer, callId)
             })
           })
         })
+
+        var canvas = document.createElement('canvas')
+        canvas.style.height = '500px'
+        canvas.style.width = '500px'
+        var cxt = canvas.getContext('2d')
+        cxt.fillStyle = '#000000'
+
+        const stream = canvas.captureStream(0)
+        stream.getTracks().forEach(t => {
+          peerConnection.addTrack(t, stream)
+        })
+        const localvideo = document.getElementById('localvideo')
+        localvideo.srcObject = stream
+
+        // navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(stream => {
+        //   stream.getTracks().forEach(t => {
+        //     peerConnection.addTrack(t)
+        //   })
+
+        //   // set local stream
+        //   const localvideo = document.getElementById('localvideo')
+        //   localvideo.srcObject = stream
+        // })
       })
     })
   })

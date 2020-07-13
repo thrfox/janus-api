@@ -4,3 +4,4 @@ npm-debug.log*
 yarn.lock
 test/*/*.bundle.js
 .history
+.vscode

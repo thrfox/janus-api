@@ -67,6 +67,8 @@ class VideoCallPlugin extends JanusPlugin {
 
   hangup () {
     super.hangup()
+    const body = { request: 'hangup' }
+    return this.transaction('message', { body }, 'event')
   }
 
   cleanup () {
