@@ -69,6 +69,17 @@ class VideoRoomListenerJanusPlugin extends JanusPlugin {
     })
   }
 
+  configure (config) {
+    const request = { request: 'configure' }
+    const body = Object.assign({}, request, config)
+
+    return this.transaction('message', { body }, 'event').then((param) => {
+      const { data } = param || {}
+
+      return data
+    })
+  }
+
   listParticipants () {
     const listparticipants = {
       request: 'listparticipants',

@@ -1,8 +1,11 @@
-const common = {
+{
+	"knownSymbols": {}
+}const common = {
   janus: {
     // url: 'wss://janus.conf.meetecho.com/ws', // 官方demo
     // url: 'ws://janus.runjian.com:8188', // 本地janus 服务器
-    url: 'wss://192.168.10.100:8189', // 用wss转发janus 服务器 ws://janus.runjian.com:8188
+    // url: 'wss://192.168.10.100:8189', // 用wss转发janus 服务器 ws://janus.runjian.com:8188
+    url: 'wss://erp.rjtx.net:7808',
     // url: 'wss://192.168.10.100:9189', // 用wss转发janus 服务器 ws://janus.runjian.com:8188
     keepAliveIntervalMs: 30000,
     options: {
@@ -17,8 +20,9 @@ const common = {
   peerConnectionConfig: {
     iceServers: [
       // { url: 'stun:stun.l.google.com:19302' }
-      // { url: 'stun:janus.runjian.com:3478' }
-      { url: 'stun:192.168.10.100:3478' }
+      { url: 'stun:janus.runjian.com:3478' }
+      // { url: 'stun:erp.rjtx.net:7800' }
+      // { url: 'stun:192.168.10.100:3478' }
     ]
   }
 }
