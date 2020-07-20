@@ -1,6 +1,4 @@
-{
-	"knownSymbols": {}
-}const common = {
+const common = {
   janus: {
     // url: 'wss://janus.conf.meetecho.com/ws', // 官方demo
     // url: 'ws://janus.runjian.com:8188', // 本地janus 服务器
