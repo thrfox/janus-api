@@ -117,6 +117,28 @@ class AudioBridgeJanusPlugin extends JanusPlugin {
     })
   }
 
+  /**
+   *
+   * @param {*} config
+   *    "request" : "configure",
+        "muted" : <true|false, whether to unmute or mute>,
+        "display" : "<new display name to have in the room>",
+        "prebuffer" : <new number of packets to buffer before decoding this participant (see "join" for more info)>,
+        "quality" : <new Opus-related complexity to use (see "join" for more info)>,
+        "volume" : <new volume percent value (see "join" for more info)>,
+        "record": <true|false, whether to record this user's contribution to a .mjr file (mixer not involved),
+        "filename": "<basename of the file to record to, -audio.mjr will be added by the plugin>"
+   */
+  configureAlreadyOffer (config = { muted: false }) {
+    const request = { request: 'configure' }
+    const body = Object.assign({}, request, config)
+
+    return this.transaction('message', { body }, 'event').then((param) => {
+      const { data } = param || {}
+      return data
+    })
+  }
+
   candidate (candidate) {
     if (this.filterDirectCandidates && candidate.candidate && this.sdpHelper.isDirectCandidate(candidate.candidate)) {
       return

@@ -21,7 +21,7 @@ var isJoined = false
 var hasConnect = false
 
 janus.connect().then(() => {
-  const audiobridge = new AudioBridgeJanusPlugin('display', console, false)
+  const audiobridge = new AudioBridgeJanusPlugin('904', console, false)
   return janus.addPlugin(audiobridge).then(() => {
     document.getElementById('listRoom').addEventListener('click', () => {
       audiobridge.listRooms().then(rooms => {
