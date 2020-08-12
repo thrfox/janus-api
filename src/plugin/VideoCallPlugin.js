@@ -93,7 +93,7 @@ class VideoCallPlugin extends JanusPlugin {
         const { jsep } = json || {}
         this.emit('accepted', data.result.username, jsep)
       } else if (event === 'hangup') {
-        this.emit('hangup')
+        this.emit('hangup', data.result)
       } else if (event === 'incomingcall') {
         const { jsep } = json || {}
         this.emit('incomingcall', data.result.username, jsep)
