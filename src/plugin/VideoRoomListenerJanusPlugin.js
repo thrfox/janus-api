@@ -80,6 +80,18 @@ class VideoRoomListenerJanusPlugin extends JanusPlugin {
     })
   }
 
+  // unsubscriber
+  leave () {
+    const request = { request: 'leave' }
+    const body = Object.assign({}, request)
+
+    return this.transaction('message', { body }, 'event').then((param) => {
+      const { data } = param || {}
+
+      return data
+    })
+  }
+
   listParticipants () {
     const listparticipants = {
       request: 'listparticipants',
